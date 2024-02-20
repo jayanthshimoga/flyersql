@@ -1,0 +1,19 @@
+# create table employee_salary
+# (
+#     snapshot_date DATE ,
+#     employee INT ,
+#     doj DATE,
+#     current_salary INT
+# );
+#
+# INSERT INTO employee_salary VALUES ('2022-01-01', 1, '2021-01-01', 1000),
+#                                    ('2023-01-01', 1, '2021-01-01', 2000),
+#                                    ('2024-01-01', 1, '2021-01-01', 2500),
+#                                    ('2025-01-01', 1, '2021-01-01', 3000);
+
+
+WITH cte as (SELECT e.snapshot_date as prev_year, e1.snapshot_date as curr_year, e1.current_salary as curr_sal,
+                    e.employee, e1.doj, e.current_salary as prev_sal FROM employee_salary e
+    RIGHT JOIN employee_salary e1
+        ON e.employee = e1.employee AND e.snapshot_date = DATE_SUB(e1.snapshot_date, INTERVAL 1 YEAR))
+SELECT *, curr_sal - (LAG(curr_sal, 2) OVER (ORDER BY curr_year))  as sal_difference FROM cte c1 ;

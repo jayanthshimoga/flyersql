@@ -1,0 +1,40 @@
+DROP TABLE cumulative;
+create table cumulative
+(
+    id INT ,
+    month INT,
+    salary INT
+);
+
+INSERT INTO cumulative (id, month, salary) VALUES (1, 1, 20),
+                                                  (2, 1, 20),
+                                                  (1, 2, 30),
+                                                  (2, 2, 30),
+                                                  (3, 2, 40),
+                                                  (1, 3, 40),
+                                                  (3, 3, 60),
+                                                  (1, 4, 60),
+                                                  (3, 4, 70);
+
+SELECT * FROM consecutive c1
+    JOIN consecutive c2 ON c2.id - c1.id = 1 AND c2.num = c1.num;
+
+# SELECT * FROM email e1
+#     JOIN email e2 on e1.email = e2.email AND e1.id > e2.id;
+
+
+SELECT * FROM temperature t1
+    JOIN temperature t2  ON DATEDIFF(t1.date, t2.date) = 1;
+
+SELECT c1.id, c1.month, sum(c.salary) as salary FROM cumulative c1
+    JOIN cumulative c on c1.month >= c.month and c1.id = c.id
+        GROUP BY id, month
+            ORDER BY id;
+
+SELECT e1.snapshot_date, e1.current_salary , sum(e2.current_salary) as salary FROM employee_salary e1 JOIN employee_salary e2
+    ON e1.snapshot_date >= e2.snapshot_date
+        Group By e1.current_salary , e1.snapshot_date
+            ORDER BY e1.snapshot_date;
+
+SELECT e1.snapshot_date, e1.employee , e2.current_salary FROM employee_salary e1 JOIN employee_salary e2
+    ON e1.snapshot_date >= e2.snapshot_date and e1.employee = e1.employee;
